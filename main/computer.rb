@@ -1,19 +1,17 @@
 require_relative 'player'
 
 class Computer < Player
-  attr_reader :best_move
+  attr_reader :move_made
 
-  STARTING_DEPTH = 0
-
+  CONUTER = 0
   def move(board)
-    minimax(board, @piece, STARTING_DEPTH)
-    board.set_user_input(@best_move.to_i, @piece)
+    minimax(board, @piece, CONUTER)
+    board.set_user_input(@move_made.to_i, @piece)
   end
 
   private
 
-  # count_taken
-  def score(board, depth)
+  def count_taken(board, depth)
     total_count = board.grid.size + 1
 
     if board.winner?
@@ -28,29 +26,29 @@ class Computer < Player
   end
 
   def minimax(board, current_player, depth)
-    scores = []
+    counts_arry = []
     moves = []
 
-    return score(board, depth) if board.game_over?
+    return count_taken(board, depth) if board.game_over?
 
     board.valid_moves.each do |move|
       board.set_user_input(move.to_i, current_player)
 
       next_player = current_player == @piece ? @enemy : @piece
-      scores << minimax(board, next_player, depth + 1)
+      counts_arry << minimax(board, next_player, depth + 1)
       moves << move
 
       board.reset_user_input(move.to_i)
     end
 
     if current_player == @piece
-      max_score_idx = scores.each_with_index.max[1]
-      @best_move = moves[max_score_idx]
-      return scores[max_score_idx]
+      max_count_taken_idx = counts_arry.each_with_index.max[1]
+      @move_made = moves[max_count_taken_idx]
+      return counts_arry[max_count_taken_idx]
     else
-      min_score_idx = scores.each_with_index.min[1]
-      @best_move = moves[min_score_idx]
-      return scores[min_score_idx]
+      min_count_taken_idx = counts_arry.each_with_index.min[1]
+      @move_made = moves[min_count_taken_idx]
+      return counts_arry[min_count_taken_idx]
     end
   end
 end

@@ -16,7 +16,7 @@ class Game
   end
 
   def play
-    set_turn_order
+    choose_characters
 
     until @board.game_over? || @board.winner?
       if @human_turn
@@ -32,24 +32,24 @@ class Game
     evaluate_game
   end
 
-  def set_turn_order
+  def choose_characters
     turn_ply = @interface.turn_to_play
     if turn_ply == '1'
       @human_turn = true
     elsif turn_ply == '2'
       @human_turn = false
     else
-      set_turn_order
+      choose_characters
     end
   end
 
   def computer_plays
-    @interface.print_message('Computer is thinking...')
+    @interface.print_message('wait, still thinking...')
     @computer.move(@board)
   end
 
   def human_plays
-    move = @interface.receive_piece_index
+    move = @interface.take_position
     if @board.valid_moves.include?(move)
       @human.move(@board, move.to_i)
     else

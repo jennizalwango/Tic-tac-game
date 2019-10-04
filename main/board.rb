@@ -25,15 +25,15 @@ class Board
         grid[index - 1] = index.to_s
     end
     
+    def check_columns
+        check_rows.transpose
+    end
+
     def check_rows
         grid.each_slice(Math.sqrt(size)).to_a
     end
     
-    def check_columns
-        check_rows.transpose
-    end
-    
-    def diagonals
+    def check_diagonals
         range = Math.sqrt(size) - 1
         diagonal_1 = (0..range).collect { |i| check_rows[i][i] }
         diagonal_2 = (0..range).collect { |i| check_rows.reverse[i][i] }
@@ -41,27 +41,27 @@ class Board
         [diagonal_1, diagonal_2.reverse]
     end
     
+    def column_win?
+        check_columns.each { |cln| return true if cln.uniq == ['X'] || cln.uniq == ['O'] }
+        false
+    end
+
     def row_win?
         check_rows.each { |row| return true if row.uniq == ['X'] || row.uniq == ['O'] }
         false
     end
     
-    def column_win?
-        check_columns.each { |col| return true if col.uniq == ['X'] || col.uniq == ['O'] }
-        false
-    end
-    
     def diagonal_win?
-        diagonals.each { |d| return true if d.uniq == ['X'] || d.uniq == ['O'] }
+        check_diagonals.each { |d| return true if d.uniq == ['X'] || d.uniq == ['O'] }
         false
-    end
-    
-    def winner?
-        row_win? || column_win? || diagonal_win?
     end
     
     def tie?
         valid_moves.length.zero? && !winner?
+    end
+
+    def winner?
+        row_win? || column_win? || diagonal_win?
     end
     
     def game_over?
@@ -71,7 +71,7 @@ class Board
     def winner
         check_rows.each { |row| return row.uniq.first if row.uniq.length == 1 }
         check_columns.each { |col| return col.uniq.first if col.uniq.length == 1 }
-        diagonals.each { |diag| return diag.uniq.first if diag.uniq.length == 1 }
+        check_diagonals.each { |diag| return diag.uniq.first if diag.uniq.length == 1 }
     end
-    end
+end
     
